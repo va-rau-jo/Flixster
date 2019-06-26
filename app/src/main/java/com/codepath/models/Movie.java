@@ -9,12 +9,24 @@ import org.json.JSONObject;
 public class Movie {
 
     private String title;
-    private String overview;
-    private String posterPath;
+    private String summary;
+    private String imagePath;
 
     public Movie(JSONObject jsonObject) throws JSONException {
         title = jsonObject.getString("title");
-        overview = jsonObject.getString("overview");
-        posterPath = jsonObject.getString("poster_path");
+        summary = jsonObject.getString("overview");
+        imagePath = jsonObject.getString("poster_path");
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 }

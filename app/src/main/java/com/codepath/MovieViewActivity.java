@@ -5,7 +5,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.codepath.models.Config;
 import com.codepath.models.Movie;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -29,9 +32,10 @@ public class MovieViewActivity extends AppCompatActivity {
     // used to get data from the movies api
     private AsyncHttpClient client;
 
-    private String imageBaseUrl;
-    private String posterSize;
     private ArrayList<Movie> movies;
+    MovieAdapter movieAdapter;
+    RecyclerView recyclerView;
+    Config config;
 
 
     @Override
@@ -41,23 +45,57 @@ public class MovieViewActivity extends AppCompatActivity {
 
         client = new AsyncHttpClient();
         movies = new ArrayList<>();
+        movieAdapter = new MovieAdapter(movies);
+        recyclerView = findViewById(R.id.rvMovies);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(movieAdapter);
         getConfiguration();
+    }
+
+    private void getNowPlaying() {
+        String url = API_BASE_URL + "/movie/now_playing";
+        RequestParams params = getBasicParams();
+
+        // GET request to get the currently playing movies
+        client.get(url, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                //load the results
+                try {
+                    JSONArray results = response.getJSONArray("results");
+                    // create movie objects
+                    for(int i = 0; i < results.length(); i++) {
+                        Movie movie = new Movie(results.getJSONObject(i));
+                        movies.add(movie);
+                        movieAdapter.notifyItemInserted(i);
+                    }
+                    Log.i(TAG, String.format("Loaded %s movies", results.length()));
+                } catch (JSONException e) {
+                    logError("Failed to parse the now playing movies", e, true);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                logError("Failed to get data from now_playing endpoint", throwable, true);
+            }
+        });
     }
 
     private void getConfiguration() {
         String url = API_BASE_URL + "/configuration";
-        RequestParams params = new RequestParams();
-        params.put(API_KEY_PARAM, getString(R.string.api_key));
+        RequestParams params = getBasicParams();
 
         // GET request
         client.get(url, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try{
-                    JSONObject images = response.getJSONObject("images");
-                    imageBaseUrl = images.getString("secure_base_url");
-                    JSONArray posterSizeOptions = images.getJSONArray("poster_sizes");
-                    posterSize = posterSizeOptions.optString(3, "w342");
+                    config = new Config(response);
+                    Log.i(TAG, String.format("Loaded configuration with base url %s and poster size %s",
+                            config.getImageBaseUrl(), config.getPosterSize()));
+                    movieAdapter.setConfig(config);
+                    getNowPlaying();
                 }
                 catch (JSONException e) {
                     logError("Failed parsing configuration", e, true);
@@ -69,6 +107,12 @@ public class MovieViewActivity extends AppCompatActivity {
                 logError("Failed getting configuration", throwable, true);
             }
         });
+    }
+
+    private RequestParams getBasicParams() {
+        RequestParams params = new RequestParams();
+        params.put(API_KEY_PARAM, getString(R.string.api_key));
+        return params;
     }
 
     private void logError(String message, Throwable error, boolean alertUser) {
