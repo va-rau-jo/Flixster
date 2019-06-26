@@ -1,11 +1,12 @@
 package com.codepath;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.models.Config;
@@ -47,9 +48,17 @@ public class MovieViewActivity extends AppCompatActivity {
         movies = new ArrayList<>();
         movieAdapter = new MovieAdapter(movies);
         recyclerView = findViewById(R.id.rvMovies);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         recyclerView.setAdapter(movieAdapter);
+
         getConfiguration();
+        Log.i(TAG, "EASFDADSF");
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        ((GridLayoutManager) (recyclerView.getLayoutManager())).setSpanCount(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ? 2 : 1);
     }
 
     private void getNowPlaying() {
@@ -82,6 +91,10 @@ public class MovieViewActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Gets configuration information such as where to find the image urls and stores
+     * it in a
+     */
     private void getConfiguration() {
         String url = API_BASE_URL + "/configuration";
         RequestParams params = getBasicParams();

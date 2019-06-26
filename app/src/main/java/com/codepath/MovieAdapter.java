@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,15 @@ import com.codepath.models.Movie;
 
 import java.util.ArrayList;
 
+/**
+ * The controller of an MVC design. It contains a list of all the movies that can be displayed
+ * within the app, and a config that stores segments of the image url.
+ */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
     private ArrayList<Movie> movies;
+
+    // Keeps track of the base image url and poster size
     private Config config;
 
     // the parent context (the main view)
@@ -62,6 +69,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                 .into(holder.image);
     }
 
+    /**
+     * @return The number of movies returned from the API
+     */
     @Override
     public int getItemCount() {
         return movies.size();
@@ -71,18 +81,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         this.config = config;
     }
 
+    /**
+     * Internal class that represents one row item containing an image preview, a title, and a
+     * small summary of the movie.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         // objects in the view
         private ImageView image;
         private TextView title;
         private TextView summary;
+        private ScrollView summaryScroller;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.ivMovieImage);
             title = itemView.findViewById(R.id.tvTitle);
             summary = itemView.findViewById(R.id.tvSummary);
+            summaryScroller = itemView.findViewById(R.id.scroller);
         }
     }
 }
