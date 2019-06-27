@@ -1,11 +1,11 @@
 package com.codepath;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide;
 import com.codepath.models.Config;
 import com.codepath.models.Movie;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 
 /**
@@ -22,6 +24,10 @@ import java.util.ArrayList;
  * within the app, and a config that stores segments of the image url.
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
+
+    public static final String TITLE_KEY = "title";
+    public static final String SUMMARY_KEY = "summary";
+    public static final String IMAGE_KEY = "image";
 
     private ArrayList<Movie> movies;
 
@@ -65,6 +71,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
         Glide.with(context)
                 .load(imageUrl)
+                //.bitmapTransform(new RoundedCornersTransformation(R.integer.corner_radius, R.integer.corner_margin))
                 .placeholder(R.drawable.flicks_movie_placeholder)
                 .into(holder.image);
     }
@@ -85,20 +92,34 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
      * Internal class that represents one row item containing an image preview, a title, and a
      * small summary of the movie.
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // objects in the view
         private ImageView image;
         private TextView title;
         private TextView summary;
-        private ScrollView summaryScroller;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.ivMovieImage);
             title = itemView.findViewById(R.id.tvTitle);
             summary = itemView.findViewById(R.id.tvSummary);
-            summaryScroller = itemView.findViewById(R.id.scroller);
+
+            itemView.setOnClickListener(this);
+        }
+
+        /**
+         * Gets adapter position
+         * @param v
+         */
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                Movie movie = movies.get(position);
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra(Movie.class.getSimpleName(), Parcels.wrap(movie));
+                context.startActivity(intent);
+            }
         }
     }
 }

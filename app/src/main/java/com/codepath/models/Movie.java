@@ -2,15 +2,19 @@ package com.codepath.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 /**
  *  Represents a movie object that is received from the MoviesDB API
  */
+@Parcel
 public class Movie {
 
-    private String title;
-    private String summary;
-    private String imagePath;
+    public String title;
+    public String summary;
+    public String imagePath;
+
+    public Movie() {}
 
     public Movie(JSONObject jsonObject) throws JSONException {
         title = jsonObject.getString("title");

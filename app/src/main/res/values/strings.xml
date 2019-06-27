@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Flixster</string>
+    <integer name="corner_radius">30</integer>
+    <integer name="corner_margin">10</integer>
 </resources>

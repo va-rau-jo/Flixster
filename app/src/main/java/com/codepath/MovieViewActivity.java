@@ -58,7 +58,10 @@ public class MovieViewActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        ((GridLayoutManager) (recyclerView.getLayoutManager())).setSpanCount(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ? 2 : 1);
+
+
+
+        //((GridLayoutManager) (recyclerView.getLayoutManager())).setSpanCount(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ? 2 : 1);
     }
 
     private void getNowPlaying() {
