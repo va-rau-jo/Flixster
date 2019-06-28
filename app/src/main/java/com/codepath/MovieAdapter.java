@@ -2,6 +2,7 @@ package com.codepath;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -19,25 +21,25 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
 /**
  * The controller of an MVC design. It contains a list of all the movies that can be displayed
- * within the app, and a config that stores segments of the image url.
+ * within the app, and a config that stores segments of the poster url.
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
-    public static final String TITLE_KEY = "title";
-    public static final String SUMMARY_KEY = "summary";
-    public static final String IMAGE_KEY = "image";
-
     private ArrayList<Movie> movies;
 
-    // Keeps track of the base image url and poster size
+    // Keeps track of the base poster url and poster size
     private Config config;
 
     // the parent context (the main view)
     private Context context;
 
-    public MovieAdapter(ArrayList<Movie> movies) {
+    MovieAdapter(ArrayList<Movie> movies) {
         this.movies = movies;
     }
 
@@ -67,13 +69,25 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         holder.title.setText(movie.getTitle());
         holder.summary.setText(movie.getSummary());
 
-        String imageUrl = config.getImageUrl(config.getPosterSize(), movie.getImagePath());
+        boolean inPortraitMode = context.getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_PORTRAIT;
+
+        String imageUrl = inPortraitMode ?
+                config.getImageUrl(config.getPosterSize(), movie.getImagePath()) :
+                config.getImageUrl(config.getBackdropSize(), movie.getBackdropPath());
+
+        int placeHolderId = inPortraitMode ?
+                R.drawable.flicks_movie_placeholder :
+                R.drawable.flicks_backdrop_placeholder;
+
+        ImageView imageView = inPortraitMode ? holder.poster : holder.backdrop;
+        assert imageView != null;
 
         Glide.with(context)
                 .load(imageUrl)
-                //.bitmapTransform(new RoundedCornersTransformation(R.integer.corner_radius, R.integer.corner_margin))
-                .placeholder(R.drawable.flicks_movie_placeholder)
-                .into(holder.image);
+                .bitmapTransform(new RoundedCornersTransformation(context, 30, 0))
+                .placeholder(placeHolderId)
+                .into(imageView);
     }
 
     /**
@@ -84,32 +98,33 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return movies.size();
     }
 
-    public void setConfig(Config config) {
+    void setConfig(Config config) {
         this.config = config;
     }
 
     /**
-     * Internal class that represents one row item containing an image preview, a title, and a
+     * Internal class that represents one row item containing an poster preview, a title, and a
      * small summary of the movie.
      */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // objects in the view
-        private ImageView image;
-        private TextView title;
-        private TextView summary;
+        // ImageViews are nullable because they only exist in the landscape or portrait mode, not
+        // both
+        @Nullable @BindView(R.id.ivPosterImage) ImageView poster;
+        @Nullable @BindView(R.id.ivBackdropImage) ImageView backdrop;
+        @BindView(R.id.tvTitle) TextView title;
+        @BindView(R.id.tvSummary) TextView summary;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.ivMovieImage);
-            title = itemView.findViewById(R.id.tvTitle);
-            summary = itemView.findViewById(R.id.tvSummary);
-
+            ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
 
         /**
-         * Gets adapter position
-         * @param v
+         * Gets adapter position from the view holder, and starts a detail intent with the movie
+         * class as a parameter.
+         * @param v The view item you just clicked
          */
         @Override
         public void onClick(View v) {

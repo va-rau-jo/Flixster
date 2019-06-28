@@ -8,6 +8,7 @@ public class Config {
 
     private String imageBaseUrl;
     private String posterSize;
+    private String backdropSize;
 
     /**
      * Using object it gets the "secure_base_url" path and selects w342 for the poster size
@@ -18,7 +19,9 @@ public class Config {
         JSONObject images = object.getJSONObject("images");
         imageBaseUrl = images.getString("secure_base_url");
         JSONArray posterSizeOptions = images.getJSONArray("poster_sizes");
+        JSONArray backdropSizeOptions = images.getJSONArray("backdrop_sizes");
         posterSize = posterSizeOptions.optString(3, "w342");
+        backdropSize = backdropSizeOptions.optString(1, "w780");
     }
 
     public String getImageUrl(String size, String path) {
@@ -31,5 +34,9 @@ public class Config {
 
     public String getPosterSize() {
         return posterSize;
+    }
+
+    public String getBackdropSize() {
+        return backdropSize;
     }
 }

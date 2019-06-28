@@ -3,6 +3,7 @@
     package="com.codepath">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -11,10 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailActivity"></activity>
-        <activity
-            android:name=".MovieViewActivity"
-            android:configChanges="orientation|screenSize">
+        <activity android:name=".DetailActivity" />
+        <activity android:name=".MovieViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
