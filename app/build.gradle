@@ -34,6 +34,7 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:2.0.2'
     implementation 'org.parceler:parceler-api:1.1.12'
     implementation 'com.jakewharton:butterknife:10.1.0'
+    implementation 'com.github.vihtarb:tooltip:0.2.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
     annotationProcessor 'org.parceler:parceler:1.1.12'
     testImplementation 'junit:junit:4.12'

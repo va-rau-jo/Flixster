@@ -14,6 +14,7 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.tooltip.Tooltip;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,12 +28,15 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cz.msebera.android.httpclient.Header;
 
 public class DetailActivity extends YouTubeBaseActivity {
 
     // Obtained from the parcel in the intent
     private DetailedMovie movie;
+
+    private Tooltip genreTooltip;
 
     // Views that must be populated from the properties of the DetailedMovie
     @BindView(R.id.tvTitle) TextView tvTitle;
@@ -105,7 +109,9 @@ public class DetailActivity extends YouTubeBaseActivity {
                     boolean trailerFound = false;
                     for(int i = 0; i < results.length(); i++) {
                         JSONObject video = results.getJSONObject(i);
-                        if(video.getString("type").equals("Trailer")) {
+                        // Display a trailer from YouTube if possible
+                        if(video.getString("type").equals("Trailer") &&
+                                video.getString("site").equals("YouTube")) {
                             trailerFound = true;
                             movie.setYoutubeId(video.getString("key"));
                             setUpYoutubePlayer();
@@ -171,6 +177,19 @@ public class DetailActivity extends YouTubeBaseActivity {
 
         float voteAverage = movie.getVoteAverage().floatValue();
         rbVoteAverage.setRating(voteAverage > 0 ? voteAverage / 2.0f : voteAverage);
+    }
+
+    @OnClick(R.id.tvGenres)
+    public void showFullGenre(TextView textView) {
+        if(genreTooltip != null && genreTooltip.isShowing()) {
+            genreTooltip.dismiss();
+        }
+        else if(textView.getLayout().getEllipsisCount(0) > 0) {
+            genreTooltip = new Tooltip.Builder(textView)
+                .setText(textView.getText().toString())
+                .setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark))
+                .show();
+        }
     }
 
     /**

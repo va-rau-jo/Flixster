@@ -1,32 +1,38 @@
 # Project 2 - *Flixster*
 
-**Flixster** is an android app that allows building a todo list and basic todo items management functionality including adding new items, editing and deleting an existing item.
+**Flixsterp** shows the latest movies currently playing in theaters. The app utilizes the Movie Database API to display images and basic information about these movies to the user.
 
-Submitted by: **Victor Araujo**
-
-Time spent: **X** hours spent in total
+Time spent: **10** hours spent in total
 
 ## User Stories
 
 The following **required** functionality is completed:
 
-* [ ] User can **view a list of todo items**
-* [ ] User can **successfully add and remove items** from the todo list
-* [ ] User's **list of items persisted** upon modification and and retrieved properly on app restart
+* [X] User can **scroll through current movies** from the Movie Database API
 
 The following **stretch** features are implemented:
 
-* [ ] User can **tap a todo item in the list and bring up an edit screen for the todo item** and then have any changes to the text reflected in the todo list
+* [X] For each movie displayed, user can see the following details:
+  * [X] Title, Poster Image, Overview (Portrait mode)
+  * [X] Title, Backdrop Image, Overview (Landscape mode)
+* [X] Display a nice default [placeholder graphic](https://guides.codepath.org/android/Displaying-Images-with-the-Glide-Library#advanced-usage) for each image during loading
+* [X] Allow user to view details of the movie including ratings and popularity within a separate activity
+* [X] Improved the user interface by experimenting with styling and coloring.
+* [X] Apply rounded corners for the poster or background images using [Glide transformations](https://guides.codepath.org/android/Displaying-Images-with-the-Glide-Library#transformations)
+* [X] Apply the popular [Butterknife annotation library](http://guides.codepath.org/android/Reducing-View-Boilerplate-with-Butterknife) to reduce boilerplate code.
+* [X] Allow video trailers to be played in full-screen using the YouTubePlayerView from the details screen.
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
-
+* [X] Shows all the genres when the genre TextView is clicked, dismisses the tooltip when it is clicked again, only displays if it doesn't fit on the screen
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+<img src='https://i.imgur.com/iCO5ZpH.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+<img src='https://i.imgur.com/HPa5uz3.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -34,9 +40,14 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 Describe any challenges encountered while building the app.
 
+## Open-source libraries used
+
+- [Android Async HTTP](https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
+- [Glide](https://github.com/bumptech/glide) - Image loading and caching library for Android
+
 ## License
 
-    Copyright [2019] [Victor Araujo]
+    Copyright [2019] [Facebook]
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
