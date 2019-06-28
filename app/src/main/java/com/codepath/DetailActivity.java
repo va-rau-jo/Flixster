@@ -1,7 +1,10 @@
 package com.codepath;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -36,29 +39,31 @@ public class DetailActivity extends YouTubeBaseActivity {
     // Obtained from the parcel in the intent
     private DetailedMovie movie;
 
+    // The tooltip that shows all the genres, only displays if the original text view doesn't
+    // fit on the screen.
     private Tooltip genreTooltip;
 
     // Views that must be populated from the properties of the DetailedMovie
     @BindView(R.id.tvTitle) TextView tvTitle;
     @BindView(R.id.tvOverview) TextView tvOverview;
     @BindView(R.id.rbVoteAverage) RatingBar rbVoteAverage;
+    @BindView(R.id.tvPopularity) TextView tvPopularity;
     @BindView(R.id.tvReleaseDate) TextView tvReleaseDate;
     @BindView(R.id.tvRunTime) TextView tvRunTime;
     @BindView(R.id.tvGenres) TextView tvGenres;
+    @BindView(R.id.loadingIcon) ProgressBar loadingIcon;
+    @BindView(R.id.player) YouTubePlayerView youtubePlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Dark);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detail);
+
         // Get the basic movie from the intent's parameters
         Movie basicMovie = Parcels.unwrap(getIntent()
                 .getParcelableExtra(Movie.class.getSimpleName()));
         createDetailedMovie(basicMovie);
-    }
-
-    private void initView() {
-        setContentView(R.layout.activity_detail);
-        ButterKnife.bind(this);
     }
 
     /**
@@ -76,8 +81,11 @@ public class DetailActivity extends YouTubeBaseActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     movie = new DetailedMovie(response);
+                    // get the youtube id after we do the basic initialization
                     getYoutubeId(basicMovie);
-                    initView();
+                    // display the actual views, delayed so we don't see the rating bar and
+                    // blank video slate before it's finished loading
+
                     updateDetails();
                 } catch (JSONException e) {
                     Log.e("detail activity", "Failed to get data from the detailed endpoint");
@@ -163,10 +171,24 @@ public class DetailActivity extends YouTubeBaseActivity {
      * additional details in the layout.
      */
     private void updateDetails() {
+        ButterKnife.bind(this);
+
+        // Stop the loading icon and show the the things that are set invisible
+        loadingIcon.setVisibility(View.INVISIBLE);
+        rbVoteAverage.setVisibility(View.VISIBLE);
+        youtubePlayer.setVisibility(View.VISIBLE);
+
         tvTitle.setText(movie.getTitle());
         tvOverview.setText(movie.getSummary());
         tvReleaseDate.setText(formatDate(movie.getReleaseDate()));
         tvRunTime.setText(formatTime(movie.getRunTime()));
+
+        double val = movie.getPopularity();
+        int popularCutOff = 50;
+
+        tvPopularity.setText(val > popularCutOff ? "Popular" : "Not Popular");
+        tvPopularity.setTextColor(val > popularCutOff ? Color.GREEN : Color.RED);
+        Log.i("SDfasdfasdf", val + "");
 
         String allGenres = "";
         for(String genre : movie.getGenres()) {

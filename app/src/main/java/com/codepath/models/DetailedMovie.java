@@ -12,6 +12,7 @@ import org.parceler.Parcel;
 public class DetailedMovie extends Movie {
 
     Integer runTime;
+    Double popularity;
     String releaseDate;
     String[] genres;
     String youtubeId;
@@ -28,6 +29,7 @@ public class DetailedMovie extends Movie {
     public DetailedMovie(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
         runTime = jsonObject.getInt("runtime");
+        popularity = jsonObject.getDouble("popularity");
         releaseDate = jsonObject.getString("release_date");
 
         JSONArray genreArray = jsonObject.getJSONArray("genres");
@@ -44,6 +46,10 @@ public class DetailedMovie extends Movie {
 
     public Integer getRunTime() {
         return runTime;
+    }
+
+    public Double getPopularity() {
+        return popularity;
     }
 
     public String getReleaseDate() {
