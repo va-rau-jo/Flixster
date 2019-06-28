@@ -25,6 +25,8 @@ The following **stretch** features are implemented:
 The following **additional** features are implemented:
 
 * [X] Shows all the genres when the genre TextView is clicked, dismisses the tooltip when it is clicked again, only displays if it doesn't fit on the screen
+* [X] Added loading bar in the detail activity to display before the API returns a video
+
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
